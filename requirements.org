@@ -81,10 +81,6 @@
      coding path names etc.).
 
 ** Marking
-   - 4 marks for passing all of the tests except testInternetGets
-   - 1 marks for passing testInternetGets
-   - 2 mark for passing not-free-tests.py
-** Marking
    - Excellent 7/7: All tests pass (free and notfree)
    - Good 6/7: All tests pass (free and notfree) except testInternetGets
    - Failure 0/7: Any test other than testInternetGets fails.
