@@ -34,6 +34,7 @@
    - [ ] HTTP POST handles at least Content-Type:
      application/x-www-form-urlencoded
    - [ ] httpclient can handle 404 requests and 200 requests
+   - [ ] Cumulatively together all tests must SUCCESSFULLY terminate within 150 seconds. Lack of termination is test failure.
 
 ** Restrictions
    - [ ] Use Python 3.6 (3.6.7 is preferred)
