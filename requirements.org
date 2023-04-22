@@ -82,6 +82,6 @@
      coding path names etc.).
 
 ** Marking
-   - Excellent 7/7: All tests pass (free and notfree)
-   - Good 6/7: All tests pass (free and notfree) except testInternetGets
+   - Excellent 7/7: All tests pass (free and notfree) in time.
+   - Good 6/7: All tests pass (free and notfree) except testInternetGets in time.
    - Failure 0/7: Any test other than testInternetGets fails.
