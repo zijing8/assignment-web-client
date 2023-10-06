@@ -55,8 +55,8 @@
    - It's a good idea to send the Host header in a GET or POST
 
 ** Submission Instructions
-   - Fork my repository from github
-     https://github.com/abramhindle/CMPUT404-assignment-web-client
+   - Fork 404's repository from github
+     https://github.com/uofa-cmput404/assignment-web-client
    - Push your commits to your fork
    - In EClass for this assignment submit a URL to the git
      repository. I would prefer github for the host.
