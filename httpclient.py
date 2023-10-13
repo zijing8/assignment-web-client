@@ -22,7 +22,7 @@ import sys
 import socket
 import re
 # you may use urllib to encode data appropriately
-import urllib.parse
+from urllib.parse import urlparse
 
 def help():
     print("httpclient.py [GET/POST] [URL]\n")
@@ -33,7 +33,19 @@ class HTTPResponse(object):
         self.body = body
 
 class HTTPClient(object):
-    #def get_host_port(self,url):
+    def get_host_port(self,url):
+        # takes in a url, parse it, then return host and port
+        parsedUrl = urlparse(url)
+        host = parsedUrl.hostname
+        port = parsedUrl.port
+
+        # if no host use default 80
+        if port is None:
+            port = 80
+
+        print(host)
+        print(port)
+        return host, port
 
     def connect(self, host, port):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -41,13 +53,20 @@ class HTTPClient(object):
         return None
 
     def get_code(self, data):
-        return None
+        # take the data and return the status code
+        code = int(data.split()[1])
+        return code
 
     def get_headers(self,data):
-        return None
+        # take the date and return the header
+        header = data.splitlines()[0]
+        return header
+
 
     def get_body(self, data):
-        return None
+        # take the data and return the body
+        body = data.split('\r\n')[-1]
+        print(body)
     
     def sendall(self, data):
         self.socket.sendall(data.encode('utf-8'))
@@ -68,14 +87,50 @@ class HTTPClient(object):
         return buffer.decode('utf-8')
 
     def GET(self, url, args=None):
+        # parse the url for the path
+        parsedUrl = urlparse(url)
+        path = parsedUrl.path
+        host, port = self.get_host_port(url)
+
+        # set path to default if no path is given
+        if path == "":
+            path = "/"
+
+        # connect, request, and recive date from host
+        self.connect(host, port)
+        self.sendall(f"GET {path} HTTP/1.0\r\nHost: {host}\r\n\r\n")
+
+        # shutdown the socket
+        self.socket.shutdown(socket.SHUT_WR)
+
+        # recieve the data
+        result = self.recvall(self.socket)
+        code = self.get_code(result)
+        body = self.get_body(result)
+        print(result)
+
+        # close the connection
+        self.close()
+
+        return HTTPResponse(code, body)
+
+    def POST(self, url, args=None):
+        # parse the url for the path
+        parsedUrl = urlparse(url)
+        path = parsedUrl.path
+        host, port = self.get_host_port(url)
+
+        # set path to default if no path is given
+        if path == "":
+            path = "/"
+
+
+        
         code = 500
         body = ""
         return HTTPResponse(code, body)
 
-    def POST(self, url, args=None):
-        code = 500
-        body = ""
-        return HTTPResponse(code, body)
+        
 
     def command(self, url, command="GET", args=None):
         if (command == "POST"):
