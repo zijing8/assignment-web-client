@@ -43,8 +43,8 @@ class HTTPClient(object):
         if port is None:
             port = 80
 
-        print(host)
-        print(port)
+        # print(host)
+        # print(port)
         return host, port
 
     def connect(self, host, port):
@@ -59,14 +59,14 @@ class HTTPClient(object):
 
     def get_headers(self,data):
         # take the date and return the header
-        header = data.splitlines()[0]
+        header = data.split('\r\n\r\n')[0]
         return header
 
 
     def get_body(self, data):
         # take the data and return the body
-        body = data.split('\r\n')[-1]
-        print(body)
+        body = data.split('\r\n\r\n')[-1]
+        return body
     
     def sendall(self, data):
         self.socket.sendall(data.encode('utf-8'))
@@ -97,17 +97,15 @@ class HTTPClient(object):
             path = "/"
 
         # connect, request, and recive date from host
+        request = f"GET {path} HTTP/1.1\r\nHost: {host}\r\n"
+        request += f"Connection: close\r\n\r\n"
         self.connect(host, port)
-        self.sendall(f"GET {path} HTTP/1.0\r\nHost: {host}\r\n\r\n")
-
-        # shutdown the socket
-        self.socket.shutdown(socket.SHUT_WR)
+        self.sendall(request)
 
         # recieve the data
         result = self.recvall(self.socket)
         code = self.get_code(result)
         body = self.get_body(result)
-        print(result)
 
         # close the connection
         self.close()
@@ -124,10 +122,40 @@ class HTTPClient(object):
         if path == "":
             path = "/"
 
+        # get the paramters and content length and encode the special characters
+        params = ''
+        contentLength = 0
+        if bool(args):
+            for each in args:
+                if len(params) != 0:
+                    params+='&'
+                params += each + '='
+                value = (args[each]).replace('\r', '%0D').replace('\n', '%0A').replace(' ', '+')
+                params += value
+            contentLength = len(params)
 
-        
-        code = 500
-        body = ""
+        request = f"POST {path} HTTP/1.1\r\n"
+        request += f"Host: {host}\r\n"
+        request += f"Content-Type: application/x-www-form-urlencoded\r\n"
+        request += f"Content-Length: {contentLength}\r\n\r\n"
+        request += f"{params}\r\n"
+
+        # connect, request, and recive date from host
+        self.connect(host, port)
+        self.sendall(request)
+
+        # shutdown the socket
+        self.socket.shutdown(socket.SHUT_WR)
+
+        # recieve the data
+        result = self.recvall(self.socket)
+        code = self.get_code(result)
+        body = self.get_body(result)
+        # print(result)
+
+        # close the connection
+        self.close()
+
         return HTTPResponse(code, body)
 
         
