@@ -124,30 +124,29 @@ class HTTPClient(object):
             path = "/"
 
         # get the paramters and content length and encode the special characters
-        params = ''
+        paramters = ''
         contentLength = 0
         if bool(args):
             for each in args:
-                if len(params) != 0:
-                    params+='&'
-                params += each + '='
-                value = (args[each]).replace('\r', '%0D').replace('\n', '%0A').replace(' ', '+')
-                params += value
-            contentLength = len(params)
+                if len(paramters) != 0:
+                    paramters+='&'
+                paramters += each + '='
+                encode = (args[each]).replace('\r', '%0D').replace('\n', '%0A').replace(' ', '+')
+                paramters += encode
+            contentLength = len(paramters)
 
         request = f"POST {path} HTTP/1.1\r\n"
         request += f"Host: {host}\r\n"
         request += f"Content-Type: application/x-www-form-urlencoded\r\n"
-        request += f"Content-Length: {contentLength}\r\n\r\n"
-        request += f"{params}\r\n"
+        request += f"Content-Length: {contentLength}\r\n"
+        request += f"Connection: close\r\n\r\n"
+
+        request += f"{paramters}\r\n"
 
         # connect, request, and recive date from host
         self.connect(host, port)
         self.sendall(request)
-
-        # shutdown the socket
-        self.socket.shutdown(socket.SHUT_WR)
-
+        
         # recieve the data
         result = self.recvall(self.socket)
         code = self.get_code(result)
