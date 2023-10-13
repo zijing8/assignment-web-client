@@ -135,12 +135,13 @@ class HTTPClient(object):
                 paramters += encode
             contentLength = len(paramters)
 
+
+        # create request
         request = f"POST {path} HTTP/1.1\r\n"
         request += f"Host: {host}\r\n"
         request += f"Content-Type: application/x-www-form-urlencoded\r\n"
         request += f"Content-Length: {contentLength}\r\n"
         request += f"Connection: close\r\n\r\n"
-
         request += f"{paramters}\r\n"
 
         # connect, request, and recive date from host
