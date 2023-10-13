@@ -20,6 +20,6 @@ compatible) http://docs.python.org/2/library/socketserver.html
 
 
 References:
-https://docs.python.org/3/library/urllib.parse.html\n
+https://docs.python.org/3/library/urllib.parse.html '\n'
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
 
